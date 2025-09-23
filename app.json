@@ -5,7 +5,10 @@
     "version": "1.0.0",
 
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "web": {
+        "bundler": "metro"
+      }
     },
 
     "experiments": {
