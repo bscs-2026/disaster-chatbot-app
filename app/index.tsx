@@ -28,9 +28,9 @@ export default function Chat() {
 
       {/* Floating Composer */}
       <View style={{ paddingBottom: insets.bottom + 12 }} className="px-4">
-        <View className="flex-row items-center rounded-full bg-white px-3 py-2 shadow-lg">
+        <View className="flex-row items-center rounded-full bg-white px-3 py-3 shadow-lg">
           <Input
-            placeholder="Type a message..."
+            placeholder="How can I help you with disaster info today?"
             maxRows={5}
             className="mr-2 flex-1"
             value={text}
