@@ -30,7 +30,7 @@ export default function Chat() {
       <View style={{ paddingBottom: insets.bottom + 12 }} className="px-4">
         <View className="flex-row items-center rounded-full bg-white px-3 py-3 shadow-lg">
           <Input
-            placeholder="How can I help you with disaster info today?"
+            placeholder="How can I help you with disaster today?"
             maxRows={5}
             className="mr-2 flex-1"
             value={text}
