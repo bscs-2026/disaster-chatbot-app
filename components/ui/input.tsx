@@ -1,6 +1,5 @@
-import React, { forwardRef } from "react";
-import { type TextInputProps, type TextInput as RNTextInput } from "react-native";
-import { AutoGrowingTextInput } from "react-native-autogrow-textinput";
+import React, { forwardRef, useState } from "react";
+import { type TextInputProps, TextInput as RNTextInput } from "react-native";
 import { cn } from "../lib/utils";
 
 type InputProps = TextInputProps & {
@@ -12,22 +11,28 @@ type InputProps = TextInputProps & {
 
 const Input = forwardRef<RNTextInput, InputProps>(
   ({ className, maxRows = 5, editable = true, style, value, onChangeText, ...props }, ref) => {
-    const lineHeight = 20; // roughly matches text-base font
+    const lineHeight = 20;
     const minHeight = 40;
     const maxHeight = maxRows * lineHeight;
 
+    const [height, setHeight] = useState(minHeight);
+
     return (
-      <AutoGrowingTextInput
+      <RNTextInput
         ref={ref}
         editable={editable}
         value={value}
         onChangeText={onChangeText}
         multiline
+        onContentSizeChange={(e) =>
+          setHeight(Math.min(e.nativeEvent.contentSize.height, maxHeight))
+        }
         style={[
           {
             minHeight,
             maxHeight,
-            textAlignVertical: "top",
+            height,
+            textAlignVertical: "center",
             paddingVertical: 8,
             paddingHorizontal: 16,
           },
