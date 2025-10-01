@@ -10,7 +10,7 @@ export default function RootLayout() {
           headerShown: true,
           headerTitle: "DisasterReady AI",
           headerTitleAlign: "center",
-          headerStyle: { backgroundColor: "#0000" },
+          headerStyle: { backgroundColor: "transparent" },
           headerTintColor: "black",
         }}
       />

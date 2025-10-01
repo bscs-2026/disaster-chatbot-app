@@ -1,9 +1,9 @@
-import { Pressable } from "react-native";
+import { Pressable, ActivityIndicator } from "react-native";
 import { cn } from "../lib/utils";
 import { Icon } from "../ui/icon";
 
 type SubmitBtnProps = {
-  variant?: "default" | "disabled" | "stop";
+  variant?: "default" | "disabled" | "loading";
   onPress?: () => void;
   className?: string;
   size?: "sm" | "md" | "lg";
@@ -22,17 +22,20 @@ export function SubmitBtn({
     lg: "h-14 w-14",
   }[size];
 
-  // ---- Color styles ----
+  // ---- Colors ----
   const variantClasses = {
-    default: "bg-black pressed:bg-gray-800 transition-colors duration-200",
-    disabled: "bg-gray-300 opacity-70",
-    stop: "bg-black pressed:bg-gray-800 transition-colors duration-200",
+    default: "bg-blue-500 active:bg-blue-600",
+    disabled: "bg-blue-300 opacity-70",
+    loading: "bg-blue-500",
   }[variant];
 
-  // ---- Icon styles ----
+  // ---- Icon logic ----
   const renderIcon = () => {
-    if (variant === "stop") {
-      return <Icon name="Square" size={20} stroke="white" />;
+    if (variant === "loading") {
+      // show square stop button (ChatGPT-like)
+      // return <Icon name="Square" size={20} stroke="white" />;
+      // OR spinner (uncomment instead if preferred)
+      return <ActivityIndicator size="small" color="white" />;
     }
     return <Icon name="ArrowUp" size={20} stroke="white" />;
   };
@@ -40,7 +43,7 @@ export function SubmitBtn({
   return (
     <Pressable
       onPress={variant === "disabled" ? undefined : onPress}
-      disabled={variant === "disabled"}
+      disabled={variant === "disabled" || variant === "loading"}
       className={cn(
         "items-center justify-center rounded-full",
         sizeClasses,
