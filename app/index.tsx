@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SubmitBtn } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { MessageBubble } from "../components/ui/messagebubble";
+import { SuggestedPrompts } from "../components/ui/suggestedprompts";
 
 export default function Chat() {
   const insets = useSafeAreaInsets();
@@ -37,14 +38,32 @@ export default function Chat() {
     }, 2000);
   };
 
+  const prompts = [
+    {
+      heading: "Ask if there is current flood",
+      question: "Is there flood happening near me?",
+    },
+    {
+      heading: "Earthquake safety",
+      question: "What should I do during an earthquake?",
+    },
+    {
+      heading: "Evacuation info",
+      question: "Where is the nearest evacuation center?",
+    },
+    {
+      heading: "Landslide tips",
+      question: "What should I do after a landslide?",
+    },
+  ];
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={80}
-      className="flex-1 bg-gray-50"
+      className="flex-1 bg-white"
     >
       {/* Messages */}
-
       <FlatList
         ref={flatListRef}
         data={messages}
@@ -53,6 +72,11 @@ export default function Chat() {
         contentContainerStyle={{ padding: 12, paddingBottom: 100 }}
         onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
       />
+
+      {/* Suggested Prompts */}
+      <View className="px-2" style={{ paddingBottom: insets.bottom }}>
+        <SuggestedPrompts prompts={prompts} onSelect={setText} />
+      </View>
 
       {/* Composer */}
       <View style={{ paddingBottom: insets.bottom + 12 }} className="px-4">
