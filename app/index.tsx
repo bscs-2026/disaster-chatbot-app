@@ -11,7 +11,7 @@ export default function Chat() {
   const flatListRef = useRef<FlatList>(null);
 
   const [text, setText] = useState("");
-  const [messages, setMessages] = useState<{ id: string; text: string; sender: "me" | "bot" }[]>(
+  const [messages, setMessages] = useState<{ id: string; text: string; sender: "user" | "bot" }[]>(
     []
   );
   const [loading, setLoading] = useState(false);
@@ -19,7 +19,7 @@ export default function Chat() {
   const handleSend = () => {
     if (!text.trim() || loading) return;
 
-    const newMsg = { id: Date.now().toString(), text, sender: "me" as const };
+    const newMsg = { id: Date.now().toString(), text, sender: "user" as const };
     setMessages((prev) => [...prev, newMsg]);
     setText("");
     setLoading(true);
@@ -30,7 +30,7 @@ export default function Chat() {
         ...prev,
         {
           id: Date.now().toString(),
-          text: "Got it! 👍",
+          text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
           sender: "bot",
         },
       ]);

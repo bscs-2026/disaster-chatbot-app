@@ -2,7 +2,7 @@ import { Platform, Text as RNText, type Role } from "react-native";
 import * as React from "react";
 import * as Slot from "@rn-primitives/slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "../lib/utils";
+import { cn } from "../../lib/utils";
 
 const textVariants = cva(
   cn(

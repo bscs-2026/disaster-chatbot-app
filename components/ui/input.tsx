@@ -1,6 +1,6 @@
 import { forwardRef, useState } from "react";
 import { type TextInputProps, TextInput as RNTextInput } from "react-native";
-import { cn } from "../lib/utils";
+import { cn } from "../../lib/utils";
 
 type InputProps = TextInputProps & {
   className?: string;

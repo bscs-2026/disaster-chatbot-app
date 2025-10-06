@@ -1,5 +1,5 @@
 import { Pressable, ActivityIndicator } from "react-native";
-import { cn } from "../lib/utils";
+import { cn } from "../../lib/utils";
 import { Icon } from "../ui/icon";
 
 type SubmitBtnProps = {
