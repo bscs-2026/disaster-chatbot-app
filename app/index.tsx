@@ -101,14 +101,18 @@ export default function Chat() {
         data={messages}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <MessageBubble text={item.text} sender={item.sender} />}
-        contentContainerStyle={{ padding: 12, paddingBottom: 100 }}
+        contentContainerStyle={{
+          padding: 12,
+          paddingBottom: insets.bottom + 80, // ✅ gives just enough space above composer
+        }}
         onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
       />
       <View
         className="px-2"
         style={{
           marginBottom: hasChatted ? 4 : 8,
-          paddingBottom: hasChatted ? 0 : insets.bottom,
+          // paddingBottom: hasChatted ? 0 : insets.bottom,
+          paddingBottom: 4,
         }}
       >
         {/* Suggested Prompts */}
