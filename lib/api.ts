@@ -1,8 +1,39 @@
 import axios from "axios";
+import Constants from "expo-constants";
 
-const API = axios.create({
-  baseURL: "http://127.0.0.1:8000", // will change for prod
-  timeout: 15000,
+const API_URL = Constants.expoConfig?.extra?.API_URL;
+
+export const api = axios.create({
+  baseURL: API_URL,
+  timeout: 20000,
 });
 
-export default API;
+export async function getHealth() {
+  const { data } = await api.get("/health");
+  return data;
+}
+
+export async function searchPosts(q: string, top_k = 5) {
+  const { data } = await api.get("/search", { params: { q, top_k } });
+  return data;
+}
+
+export async function askLlama(q: string) {
+  const { data } = await api.get("/llama/llm-only", { params: { q } });
+  return data;
+}
+
+export async function askGPT4o(q: string) {
+  const { data } = await api.get("/gpt-4o-mini/llm-only", { params: { q } });
+  return data;
+}
+
+export async function askLlamaRAG(q: string) {
+  const { data } = await api.get("/llama/rag", { params: { q } });
+  return data;
+}
+
+export async function askGPT4oRAG(q: string) {
+  const { data } = await api.get("/gpt-4o-mini/rag", { params: { q } });
+  return data;
+}
