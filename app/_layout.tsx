@@ -16,6 +16,7 @@ export default function RootLayout() {
       >
         <Drawer.Screen name="index" options={{ title: "Chat" }} />
         <Drawer.Screen name="hotlines" options={{ title: "Disaster Hotlines" }} />
+        <Drawer.Screen name="test_backend" options={{ title: "[DEBUGGING] Backend Test" }} />
       </Drawer>
     </SafeAreaProvider>
   );

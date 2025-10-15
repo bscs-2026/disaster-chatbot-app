@@ -1,42 +1,73 @@
 import { useState, useRef } from "react";
-import { KeyboardAvoidingView, Platform, FlatList, View } from "react-native";
+import { KeyboardAvoidingView, Platform, FlatList, View, Text, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SubmitBtn } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { MessageBubble } from "../components/ui/messagebubble";
 import { SuggestedPrompts } from "../components/ui/suggestedprompts";
+import { askGPT4o, askLlamaRAG, askGPT4oRAG, askLlama } from "../lib/api";
 
 export default function Chat() {
   const insets = useSafeAreaInsets();
   const flatListRef = useRef<FlatList>(null);
 
   const [text, setText] = useState("");
-  const [messages, setMessages] = useState<{ id: string; text: string; sender: "me" | "bot" }[]>(
+  const [messages, setMessages] = useState<{ id: string; text: string; sender: "user" | "bot" }[]>(
     []
   );
   const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState<"llama" | "gpt4o" | "llamarag" | "gpt4orag">("llama");
+  const [hasChatted, setHasChatted] = useState(false);
 
   const handleSend = () => {
     if (!text.trim() || loading) return;
 
-    const newMsg = { id: Date.now().toString(), text, sender: "me" as const };
+    const newMsg = { id: Date.now().toString(), text, sender: "user" as const };
     setMessages((prev) => [...prev, newMsg]);
     setText("");
     setLoading(true);
+    setHasChatted(true);
 
-    // Fake bot reply
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now().toString(),
-          text: "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.",
-          sender: "bot",
-          xs,
-        },
-      ]);
-      setLoading(false);
-    }, 2000);
+    (async () => {
+      try {
+        let res;
+        switch (mode) {
+          case "llamarag":
+            res = await askLlamaRAG(text);
+            break;
+          case "gpt4o":
+            res = await askGPT4o(text);
+            break;
+          case "gpt4orag":
+            res = await askGPT4oRAG(text);
+            break;
+          default:
+            res = await askLlama(text);
+        }
+
+        const botReply = res?.answer || res?.response || JSON.stringify(res, null, 2);
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now().toString(),
+            text: botReply,
+            sender: "bot",
+          },
+        ]);
+      } catch (e: any) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now().toString(),
+            text: `⚠️ Error: ${e?.message || e}`,
+            sender: "bot",
+          },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    })();
   };
 
   const prompts = [
@@ -70,13 +101,44 @@ export default function Chat() {
         data={messages}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <MessageBubble text={item.text} sender={item.sender} />}
-        contentContainerStyle={{ padding: 12, paddingBottom: 100 }}
+        contentContainerStyle={{
+          padding: 12,
+          paddingBottom: insets.bottom + 80, // ✅ gives just enough space above composer
+        }}
         onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
       />
+      <View
+        className="px-2"
+        style={{
+          marginBottom: hasChatted ? 4 : 8,
+          // paddingBottom: hasChatted ? 0 : insets.bottom,
+          paddingBottom: 4,
+        }}
+      >
+        {/* Suggested Prompts */}
+        {!hasChatted && <SuggestedPrompts prompts={prompts} onSelect={setText} />}
 
-      {/* Suggested Prompts */}
-      <View className="px-2" style={{ paddingBottom: insets.bottom }}>
-        <SuggestedPrompts prompts={prompts} onSelect={setText} />
+        {/* Model selector */}
+        <View className="mt-2 flex-row flex-wrap justify-center">
+          {[
+            { id: "llama", label: "LLaMA" },
+            { id: "llamarag", label: "LLaMA-RAG" },
+            { id: "gpt4o", label: "GPT-4o" },
+            { id: "gpt4orag", label: "GPT-4o-RAG" },
+          ].map((m) => (
+            <Pressable
+              key={m.id}
+              onPress={() => setMode(m.id as any)}
+              className={`m-1 rounded-full px-3 py-2 ${
+                mode === m.id ? "bg-blue-500" : "bg-gray-200"
+              }`}
+            >
+              <Text className={mode === m.id ? "font-semibold text-white" : "text-black"}>
+                {m.label}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
       </View>
 
       {/* Composer */}
