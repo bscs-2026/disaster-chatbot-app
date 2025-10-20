@@ -1,10 +1,21 @@
-import { ScrollView, View, Text, Pressable, Linking, Alert, Image } from "react-native";
+import {
+  ScrollView,
+  View,
+  Text,
+  Pressable,
+  Linking,
+  Alert,
+  Image,
+  useColorScheme,
+} from "react-native";
 import * as Clipboard from "expo-clipboard";
 
 export default function Hotlines() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+
   const handleAction = (num: string) => {
     const clean = num.replace(/[^0-9]/g, "");
-
     if (num.toLowerCase().includes("text hotline")) {
       Linking.openURL(`sms:${clean}`);
     } else {
@@ -18,12 +29,16 @@ export default function Hotlines() {
   };
 
   const Card = ({ title, icon, numbers }: { title: string; icon?: string; numbers: string[] }) => (
-    <View className="mb-5 rounded-xl border border-gray-200 bg-white p-4 shadow-md">
+    <View
+      className={`mb-5 rounded-xl border p-4 shadow-md ${
+        isDark ? "border-[#2A2B32] bg-[#2A2B32]" : "border-gray-200 bg-white"
+      }`}
+    >
       <View className="mb-3 flex-row items-center">
         {icon ? (
           icon.includes(".png") || icon.includes(".jpg") ? (
             <Image
-              source={require("../assets/logos/dswd.png")} // example, replace dynamically if needed
+              source={require("../assets/logos/dswd.png")} // example only
               className="mr-2 h-6 w-6"
               resizeMode="contain"
             />
@@ -31,7 +46,9 @@ export default function Hotlines() {
             <Text className="mr-2 text-lg">{icon}</Text>
           )
         ) : null}
-        <Text className="flex-shrink text-lg font-bold text-black">{title}</Text>
+        <Text className={`flex-shrink text-lg font-bold ${isDark ? "text-white" : "text-black"}`}>
+          {title}
+        </Text>
       </View>
 
       {numbers.map((num, i) => (
@@ -39,17 +56,29 @@ export default function Hotlines() {
           key={i}
           onPress={() => handleAction(num)}
           onLongPress={() => handleCopy(num)}
-          className="mb-2 rounded-lg bg-blue-500 px-4 py-3 active:bg-blue-600"
+          className={`mb-2 rounded-lg px-4 py-3 ${
+            isDark ? "bg-[#40414F] active:bg-blue-900" : "bg-blue-500 active:bg-blue-600"
+          }`}
         >
-          <Text className="text-center text-base font-semibold text-white">{num}</Text>
+          <Text
+            className={`text-center text-base font-semibold ${
+              isDark ? "text-white" : "text-white"
+            }`}
+          >
+            {num}
+          </Text>
         </Pressable>
       ))}
     </View>
   );
 
   return (
-    <ScrollView className="flex-1 bg-gray-50 p-4">
-      <Text className="mb-6 text-center text-2xl font-extrabold text-gray-900">
+    <ScrollView className={`flex-1 p-4 ${isDark ? "bg-[#202123]" : "bg-gray-50"}`}>
+      <Text
+        className={`mb-6 text-center text-2xl font-extrabold ${
+          isDark ? "text-white" : "text-gray-900"
+        }`}
+      >
         Disaster Hotlines
       </Text>
 

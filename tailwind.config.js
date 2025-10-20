@@ -10,4 +10,5 @@ module.exports = {
     extend: {},
   },
   plugins: [],
+  darkmode: "media",
 };

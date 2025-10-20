@@ -1,5 +1,5 @@
 import { forwardRef, useState } from "react";
-import { type TextInputProps, TextInput as RNTextInput } from "react-native";
+import { type TextInputProps, TextInput as RNTextInput, useColorScheme } from "react-native";
 import { cn } from "../../lib/utils";
 
 type InputProps = TextInputProps & {
@@ -14,8 +14,14 @@ const Input = forwardRef<RNTextInput, InputProps>(
     const lineHeight = 20;
     const minHeight = 40;
     const maxHeight = maxRows * lineHeight;
+    const colorScheme = useColorScheme();
+    const isDark = colorScheme === "dark";
 
     const [height, setHeight] = useState(minHeight);
+
+    const bgColor = isDark ? "bg-neutral-900" : "bg-white";
+    const textColor = isDark ? "text-white" : "text-black";
+    const placeholderColor = isDark ? "#A1A1AA" : "#9CA3AF";
 
     return (
       <RNTextInput
@@ -40,11 +46,12 @@ const Input = forwardRef<RNTextInput, InputProps>(
         ]}
         className={cn(
           "rounded-full text-base",
-          "bg-white text-black dark:bg-gray-800 dark:text-white",
+          bgColor,
+          textColor,
           !editable && "bg-gray-200 text-gray-500 opacity-70",
           className
         )}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor={placeholderColor}
         {...props}
       />
     );
