@@ -5,7 +5,7 @@ import { SubmitBtn } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { MessageBubble } from "../components/ui/messagebubble";
 import { SuggestedPrompts } from "../components/ui/suggestedprompts";
-import { askGPT4o, askLlamaRAG, askGPT4oRAG, askLlama } from "../lib/api";
+import { askGPT4oRAG } from "../lib/api";
 
 export default function Chat() {
   const insets = useSafeAreaInsets();
@@ -16,7 +16,6 @@ export default function Chat() {
     []
   );
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<"llama" | "gpt4o" | "llamarag" | "gpt4orag">("llama");
   const [hasChatted, setHasChatted] = useState(false);
 
   const handleSend = () => {
@@ -30,20 +29,7 @@ export default function Chat() {
 
     (async () => {
       try {
-        let res;
-        switch (mode) {
-          case "llamarag":
-            res = await askLlamaRAG(text);
-            break;
-          case "gpt4o":
-            res = await askGPT4o(text);
-            break;
-          case "gpt4orag":
-            res = await askGPT4oRAG(text);
-            break;
-          default:
-            res = await askLlama(text);
-        }
+        const res = await askGPT4oRAG(text);
 
         const botReply = res?.answer || res?.response || JSON.stringify(res, null, 2);
 
@@ -117,28 +103,6 @@ export default function Chat() {
       >
         {/* Suggested Prompts */}
         {!hasChatted && <SuggestedPrompts prompts={prompts} onSelect={setText} />}
-
-        {/* Model selector */}
-        <View className="mt-2 flex-row flex-wrap justify-center">
-          {[
-            { id: "llama", label: "LLaMA" },
-            { id: "llamarag", label: "LLaMA-RAG" },
-            { id: "gpt4o", label: "GPT-4o" },
-            { id: "gpt4orag", label: "GPT-4o-RAG" },
-          ].map((m) => (
-            <Pressable
-              key={m.id}
-              onPress={() => setMode(m.id as any)}
-              className={`m-1 rounded-full px-3 py-2 ${
-                mode === m.id ? "bg-blue-500" : "bg-gray-200"
-              }`}
-            >
-              <Text className={mode === m.id ? "font-semibold text-white" : "text-black"}>
-                {m.label}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
       </View>
 
       {/* Composer */}
