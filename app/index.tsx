@@ -1,15 +1,17 @@
 import { useState, useRef } from "react";
-import { KeyboardAvoidingView, Platform, FlatList, View, Text, Pressable } from "react-native";
+import { KeyboardAvoidingView, Platform, FlatList, View, useColorScheme } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SubmitBtn } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { MessageBubble } from "../components/ui/messagebubble";
 import { SuggestedPrompts } from "../components/ui/suggestedprompts";
-import { askGPT4oRAG } from "../lib/api";
+import { chatRAG } from "../lib/api";
 
 export default function Chat() {
   const insets = useSafeAreaInsets();
   const flatListRef = useRef<FlatList>(null);
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   const [text, setText] = useState("");
   const [messages, setMessages] = useState<{ id: string; text: string; sender: "user" | "bot" }[]>(
@@ -18,42 +20,37 @@ export default function Chat() {
   const [loading, setLoading] = useState(false);
   const [hasChatted, setHasChatted] = useState(false);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!text.trim() || loading) return;
 
     const newMsg = { id: Date.now().toString(), text, sender: "user" as const };
-    setMessages((prev) => [...prev, newMsg]);
+    const updatedMessages = [...messages, newMsg];
+    setMessages(updatedMessages);
     setText("");
     setLoading(true);
     setHasChatted(true);
 
-    (async () => {
-      try {
-        const res = await askGPT4oRAG(text);
+    try {
+      const chatHistory = updatedMessages.map((m) => ({
+        role: m.sender === "user" ? "user" : "assistant",
+        content: m.text,
+      }));
 
-        const botReply = res?.answer || res?.response || JSON.stringify(res, null, 2);
+      const res = await chatRAG(chatHistory);
+      const botReply = res.answer;
 
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now().toString(),
-            text: botReply,
-            sender: "bot",
-          },
-        ]);
-      } catch (e: any) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now().toString(),
-            text: `⚠️ Error: ${e?.message || e}`,
-            sender: "bot",
-          },
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    })();
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now().toString(), text: botReply, sender: "bot" },
+      ]);
+    } catch (e: any) {
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now().toString(), text: `⚠️ Error: ${e?.message || e}`, sender: "bot" },
+      ]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const prompts = [
@@ -80,6 +77,7 @@ export default function Chat() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={80}
       className="flex-1 bg-white"
+      style={{ backgroundColor: isDark ? "#000" : "#fff" }}
     >
       {/* Messages */}
       <FlatList
@@ -89,7 +87,7 @@ export default function Chat() {
         renderItem={({ item }) => <MessageBubble text={item.text} sender={item.sender} />}
         contentContainerStyle={{
           padding: 12,
-          paddingBottom: insets.bottom + 80, // ✅ gives just enough space above composer
+          paddingBottom: insets.bottom + 80,
         }}
         onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
       />
@@ -97,7 +95,6 @@ export default function Chat() {
         className="px-2"
         style={{
           marginBottom: hasChatted ? 4 : 8,
-          // paddingBottom: hasChatted ? 0 : insets.bottom,
           paddingBottom: 4,
         }}
       >
@@ -107,16 +104,21 @@ export default function Chat() {
 
       {/* Composer */}
       <View style={{ paddingBottom: insets.bottom + 12 }} className="px-4">
-        <View className="flex-row items-center rounded-full bg-white px-3 py-3 shadow-lg">
+        <View
+          className={`flex-row items-center rounded-full px-3 py-3 shadow-lg ${
+            isDark ? "bg-neutral-900" : "bg-white"
+          }`}
+        >
+          {" "}
           <Input
             placeholder="How can I help you with disaster today?"
+            placeholderTextColor={isDark ? "white" : "#888"}
             maxRows={5}
             className="mr-2 flex-1"
             value={text}
             onChangeText={setText}
             editable={!loading}
           />
-
           {/* Pass correct variant */}
           <SubmitBtn
             variant={loading ? "loading" : !text.trim() ? "disabled" : "default"}

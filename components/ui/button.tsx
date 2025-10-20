@@ -1,4 +1,4 @@
-import { Pressable, ActivityIndicator } from "react-native";
+import { Pressable, ActivityIndicator, useColorScheme } from "react-native";
 import { cn } from "../../lib/utils";
 import { Icon } from "../ui/icon";
 
@@ -15,6 +15,9 @@ export function SubmitBtn({
   className,
   size = "md",
 }: SubmitBtnProps) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+
   // ---- Size variants (circle) ----
   const sizeClasses = {
     sm: "h-10 w-10",
@@ -24,22 +27,21 @@ export function SubmitBtn({
 
   // ---- Colors ----
   const variantClasses = {
-    default: "bg-blue-500 active:bg-blue-600",
-    disabled: "bg-blue-300 opacity-70",
-    loading: "bg-blue-500",
+    default: isDark ? "bg-[#40414F] active:bg-[#FFF]" : "bg-blue-500 active:bg-blue-600",
+    disabled: isDark ? "bg-[#2A2B32] opacity-40" : "bg-blue-300 opacity-70",
+    loading: isDark ? "bg-[#40414F]" : "bg-blue-500",
   }[variant];
+
+  const iconColor =
+    variant === "disabled" ? (isDark ? "#8E8E93" : "white") : isDark ? "white" : "white";
 
   // ---- Icon logic ----
   const renderIcon = () => {
     if (variant === "loading") {
-      // show square stop button (ChatGPT-like)
-      // return <Icon name="Square" size={20} stroke="white" />;
-      // OR spinner (uncomment instead if preferred)
-      return <ActivityIndicator size="small" color="white" />;
+      return <ActivityIndicator size="small" color={iconColor} />;
     }
-    return <Icon name="ArrowUp" size={20} stroke="white" />;
+    return <Icon name="ArrowUp" size={20} stroke={iconColor} />;
   };
-
   return (
     <Pressable
       onPress={variant === "disabled" ? undefined : onPress}

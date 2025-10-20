@@ -18,22 +18,27 @@ export async function searchPosts(q: string, top_k = 5) {
   return data;
 }
 
-export async function askLlama(q: string) {
-  const { data } = await api.get("/llama/llm-only", { params: { q } });
-  return data;
-}
+// export async function askLlama(q: string) {
+//   const { data } = await api.get("/llama/llm-only", { params: { q } });
+//   return data;
+// }
 
-export async function askGPT4o(q: string) {
-  const { data } = await api.get("/gpt-4o-mini/llm-only", { params: { q } });
-  return data;
-}
+// export async function askGPT4o(q: string) {
+//   const { data } = await api.get("/gpt-4o-mini/llm-only", { params: { q } });
+//   return data;
+// }
 
-export async function askLlamaRAG(q: string) {
-  const { data } = await api.get("/llama/rag", { params: { q } });
-  return data;
-}
+// export async function askLlamaRAG(q: string) {
+//   const { data } = await api.get("/llama/rag", { params: { q } });
+//   return data;
+// }
 
 export async function askGPT4oRAG(q: string) {
   const { data } = await api.get("/gpt-4o-mini/rag", { params: { q } });
+  return data;
+}
+
+export async function chatRAG(messages: { role: string; content: string }[]) {
+  const { data } = await api.post("/chat/rag", { messages });
   return data;
 }
