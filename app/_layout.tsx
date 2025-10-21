@@ -10,21 +10,20 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar style={isDark ? "light" : "dark"} />
-
+      {/* Status bar should be inside but not a sibling of Drawer */}
       <Drawer
         screenOptions={{
           headerShown: true,
           headerTitle: "DisasterReady AI",
           headerTitleAlign: "center",
 
-          // 🖤 Header background + text colors
+          // Header colors
           headerStyle: {
             backgroundColor: isDark ? "#121212" : "white",
           },
           headerTintColor: isDark ? "white" : "black",
 
-          // 🧭 Drawer background + label colors
+          // Drawer colors
           drawerStyle: {
             backgroundColor: isDark ? "#000" : "#fff",
           },
@@ -32,9 +31,27 @@ export default function RootLayout() {
           drawerInactiveTintColor: isDark ? "#fff" : "#444",
         }}
       >
-        <Drawer.Screen name="index" options={{ title: "Chat" }} />
-        <Drawer.Screen name="hotlines" options={{ title: "Disaster Hotlines" }} />
-        <Drawer.Screen name="test_backend" options={{ title: "[DEBUGGING] Backend Test" }} />
+        <Drawer.Screen
+          name="index"
+          options={{
+            title: "Chat",
+            headerRight: () => <StatusBar style={isDark ? "light" : "dark"} />,
+          }}
+        />
+        <Drawer.Screen
+          name="hotlines"
+          options={{
+            title: "Disaster Hotlines",
+            headerRight: () => <StatusBar style={isDark ? "light" : "dark"} />,
+          }}
+        />
+        <Drawer.Screen
+          name="test_backend"
+          options={{
+            title: "[DEBUGGING] Backend Test",
+            headerRight: () => <StatusBar style={isDark ? "light" : "dark"} />,
+          }}
+        />
       </Drawer>
     </SafeAreaProvider>
   );

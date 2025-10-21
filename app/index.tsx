@@ -6,6 +6,7 @@ import { Input } from "../components/ui/input";
 import { MessageBubble } from "../components/ui/messagebubble";
 import { SuggestedPrompts } from "../components/ui/suggestedprompts";
 import { chatRAG } from "../lib/api";
+import { cn } from "../lib/utils";
 
 export default function Chat() {
   const insets = useSafeAreaInsets();
@@ -105,21 +106,19 @@ export default function Chat() {
       {/* Composer */}
       <View style={{ paddingBottom: insets.bottom + 12 }} className="px-4">
         <View
-          className={`flex-row items-center rounded-full px-3 py-3 shadow-lg ${
+          className={cn(
+            "flex-row items-center rounded-full px-3 py-3 shadow-lg",
             isDark ? "bg-neutral-900" : "bg-white"
-          }`}
+          )}
         >
-          {" "}
           <Input
             placeholder="How can I help you with disaster today?"
-            placeholderTextColor={isDark ? "white" : "#888"}
             maxRows={5}
             className="mr-2 flex-1"
             value={text}
             onChangeText={setText}
             editable={!loading}
           />
-          {/* Pass correct variant */}
           <SubmitBtn
             variant={loading ? "loading" : !text.trim() ? "disabled" : "default"}
             onPress={handleSend}
