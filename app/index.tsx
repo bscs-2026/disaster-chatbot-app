@@ -57,15 +57,15 @@ export default function Chat() {
   const prompts = [
     {
       heading: "Ask if there is current flood",
-      question: "Is there flood happening near me?",
+      question: "Is there flood happening in Davao City right now?",
     },
     {
       heading: "Earthquake safety",
       question: "What should I do during an earthquake?",
     },
     {
-      heading: "Evacuation info",
-      question: "Where is the nearest evacuation center?",
+      heading: "Disaster preparedness",
+      question: "What should I do to prepare for a disaster?",
     },
     {
       heading: "Landslide tips",
